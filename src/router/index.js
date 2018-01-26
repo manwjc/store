@@ -5,6 +5,7 @@ import Router from 'vue-router'
 Vue.use(Router)
 
 const Store = resolve => require(['@/pages/Store'], resolve)
+const ItemDetails = resolve => require(['@/pages/ItemDetails'], resolve)
 
 export default new Router({
   routes: [
@@ -12,6 +13,11 @@ export default new Router({
       path: '/',
       name: 'Store',
       component: Store
+    },
+    {
+      path: '/itemDetails',
+      name: 'ItemDetails',
+      component: ItemDetails
     }
   ]
 })
