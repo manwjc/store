@@ -60,12 +60,14 @@
 			</section>-->
 
 			<!-- swiper banner -->
-			<swiper class="m010 slideBox store-banner box-shadow" :options="bannerOptions">
-				<swiper-slide v-for="(item, index) in adList" :key="index">
-					<img :src="item.pic">
-				</swiper-slide>
-				<div class="swiper-pagination" slot="pagination"></div>
-			</swiper>
+			<section class="sectionBox">
+				<swiper class="m010 mtop10 slideBox store-banner box-shadow" :options="bannerOptions">
+					<swiper-slide v-for="(item, index) in adList" :key="index">
+						<img :src="item.pic">
+					</swiper-slide>
+					<div class="swiper-pagination" slot="pagination"></div>
+				</swiper>
+			</section>
 			<!--<section class="sectionBox ptb15">
 			<ul class="mleft10">
 				<li>
@@ -83,9 +85,11 @@
 				<h3 class="common-title f18 pleft10" style="padding-bottom: 8px;">优选精品</h3>
 
 				<!-- swiper -->
-				<swiper class="m010 borderbottomgrey" :options="itemTypeOptions">
-					<swiper-slide v-for="(item, index) in itemTypes" :key="index" class="ptb10" :class="index === curItemTypes ? 'red':''" @click.native.stop="getItemList(item.id, index)">{{item.typeName}}</swiper-slide>
-				</swiper>
+				<div class="height36">
+					<swiper class="m010 borderbottomgrey" :options="itemTypeOptions">
+						<swiper-slide v-for="(item, index) in itemTypes" :key="index" class="ptb10" :class="index === curItemTypeIndex ? 'red':''" @click.native.stop="getItemList(item.id, index, changeItemType)">{{item.typeName}}</swiper-slide>
+					</swiper>
+				</div>
 
 				<div id="tabBox-bd">
 					<div class="con p010 bgwhite">
@@ -113,7 +117,9 @@
 								<li class="join-btn store-shoppingcart" @click="addCartEvent(item.id)" leftCount="10"><img src="../../static/images/icon_redcart.png"></li>
 							</ul>
 							<!--<div class="sectionBox loading grey mtop10 newloading"><img src="../../static/images/loading01.gif" /> 加载中…</div>-->
-							<loading :loadingShow="loadingShow" :showIcon="showIcon" :loadingText="loadingText"></loading>
+							<div v-infinite-scroll="loadMore" infinite-scroll-disabled="busy" infinite-scroll-distance="10">
+								<loading :loadingShow="loadingShow" :showIcon="showIcon" :loadingText="loadingText"></loading>
+							</div>
 						</div>
 					</div>
 				</div>
@@ -130,6 +136,7 @@
 	import VueSwiper from 'vue-awesome-swiper'
 	import VueMessage from 'vue-show-message'
 	import loading from 'vue-loading-tips'
+	import infiniteScroll from 'vue-infinite-scroll'
 
 	Vue.use(VueSwiper)
 
@@ -138,6 +145,8 @@
 	})
 
 	Vue.use(loading)
+
+	Vue.use(infiniteScroll)
 
 	export default {
 		name: 'Store',
@@ -150,8 +159,7 @@
 				page: 1,
 				pageNum: 5,
 				hasNext: true,
-				adList: [
-					{
+				adList: [{
 						url: '/supplierInfo/supplier03.htm',
 						pic: '../../static/images/supplier_a_01.jpg'
 					},
@@ -164,12 +172,17 @@
 						pic: '../../static/images/supplier_c_01.jpg'
 					}
 				],
-				curItemTypes: 0,
+				curItemTypeIndex: 0,
+				curItemTypeId: '',
+				changeItemType: true,
 
 				//vue-loading-tips props
 				loadingShow: true,
 				showIcon: true,
 				loadingText: '正在加载了',
+				
+				//vue-infinite-scroll，默认为true，等待itemTypes请求完成后，再开始执行this.loadMore()请求商品
+				busy: true,
 
 				//swiper options
 				itemTypeOptions: {
@@ -188,10 +201,21 @@
 		},
 		mounted() {
 			//获取商品类型
-			this.getItemTypes();
+//			this.getItemTypes();
 
 			//获取设置购物车数量
-			this.setCartEvent(8);
+//			this.setCartEvent(8);
+
+			const hasGotItemTypes = new Promise(this.getItemTypes);
+			
+			hasGotItemTypes.then((data) => {
+				this.setCartEvent(data.shopPicList.length);
+			}).then((data) => {
+				this.busy = false;
+				this.loadMore();
+			}).catch((err) => {
+				console.log(err);
+			})
 		},
 		computed: {
 			cartCount() {
@@ -200,7 +224,7 @@
 		},
 		methods: {
 			//get传参方式 获取商品类型
-			getItemTypes() {
+			getItemTypes(resolve) {
 				let dataParams = {
 					'detailUrl': '/ebuyV2/qryStoreInfo.json',
 					'supplyMerchantId': this.$route.query.storeId
@@ -212,46 +236,103 @@
 					if(res.data.status === '0000') {
 						this.itemTypes = res.data.dataValue.ebuyProdTypeList;
 
-						//获取第一个类型商品
-						const firstTypeId = this.itemTypes[0].id;
-						this.getItemList(firstTypeId, 0);
+						this.curItemTypeId = this.itemTypes[0].id;
+						console.log('请求商品类型完成');
+						resolve(res.data.dataValue);
 					}
 				})
 			},
 			//获取商品列表
-			getItemList(productTypeId, index) {
+			getItemList(productTypeId = this.itemTypes[0].id, index = 0, changeItemType) {
+				
+				//在当前标签下：继续点击当前标签，返回；或继续滚动触发loadMore事件，返回。
+				if((this.curItemTypeIndex === index && changeItemType) || (this.curItemTypeIndex === index && this.busy)){
+					return;
+				}
+				
+				//如果curItemTypeIndex不是当前类型，则设置为当前类型索引
+				if(this.curItemTypeIndex !== index) {
+					//点击新标签，如果当前标签正在加载商品，返回。
+					if(this.busy){
+						return;
+					}
+					this.curItemTypeIndex = index;
+					//切换商品类型，初始化列表、页数
+					this.itemList = [];
+					this.page = 1;
+					this.hasNext = true;
+					
+					this.loadingText = '加载中';
+					this.showIcon = true;
+				}
+				
+				//当前标签hasNext为false，返回。
+				if(!this.hasNext) {
+					this.busy = false;
+					this.loadingText = '已加载到最后一页';
+					this.showIcon = false;
+					return;
+				}
+
+				//开始请求商品，设置busy为true
+				this.busy = true;
 				let dataParams = {
 					'detailUrl': '/ebuyV2/qryProdList4ExperienceStore.json',
 					'storeId': this.$route.query.storeId,
-					'productTypeId': productTypeId,
 					'supplyType': 2,
+					'productTypeId': productTypeId,
 					'page': this.page,
 					'pageNum': this.pageNum
 				}
 
-				this.curItemTypes = index;
+				this.curItemTypeId = productTypeId;
 				this.$axios.get(this.commonUrl, {
 					params: dataParams
 				}).then((res) => {
 					if(res.data.status === '0000') {
-						this.itemList = res.data.dataValue.productList;
+						//如果curItemTypeIndex不是当前类型，则将itemList全部替换为新返回的商品列表
+						if(this.curItemTypeIndex !== index) {
+							this.itemList = res.data.dataValue.productList;
+						//如果curItemTypeIndex是当前类型，则将新返回的商品列表累加到itemList里
+						} else {
+							this.itemList = this.itemList.concat(res.data.dataValue.productList)
+						}
+
+						this.page++;
 						this.hasNext = res.data.dataValue.hasNext;
+						this.busy = false;
+						console.log('请求商品列表完成');
 					}
 				})
 			},
 			//初始化购物车
 			setCartEvent(num) {
 				this.$store.commit('setCart', num);
+				console.log('设置购物车数量完成');
+				return '设置购物车数量完成';
 			},
 			//增加购物车数量
 			addCartEvent(productId) {
 				this.$store.commit('addCart', 1);
 				this.$showMsg('已加入购物车');
-			}
+			},
+
+			loadMore() {
+//				this.busy = true;
+				setTimeout(() => {
+					//获取第一个类型商品
+					const itemTypeId = this.curItemTypeId;
+					const itemTypeIndex = this.curItemTypeIndex;
+
+					this.getItemList(itemTypeId, itemTypeIndex);
+				}, 1000);
+			},
 		}
 	}
 </script>
 
-<style>
-
+<style scoped="scoped">
+	.height36 {
+		height: 36px;
+	}
 </style>
