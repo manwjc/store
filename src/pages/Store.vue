@@ -95,27 +95,25 @@
 					<div class="con p010 bgwhite">
 						<div id="storeListBox" class="p010 storelist-minheight">
 							<ul class="displaybox boxalignend pos-relative mtop5 pt10 store-item t-left" v-for="(item, index) in itemList">
-								<router-link to="/ItemDetails">
-									<li class="store-item-img radius4 overhidden" prdtId="1">
-										<a class="item-link" data-itemid="121895" href="#">
-											<img class="bgloading bgsize110" data-original="../../static/images/prev_img.jpg" src="../../static/images/pixel.gif">
-										</a>
-									</li>
-									<li class="boxflex01 f16 m010 mb5 lineheight110">
-										<a class="item-link" data-itemid="121895" href="#" target="_blank">
-											<div class="store-item-title">
-												<div class="store-item-name word-break1">{{item.name}}</div>
-												<div class="store-item-desc mtop2 f12 grey word-break1">{{item.nameMini}}</div>
-											</div>
-											<div class="red"><span class="f12">精选价 </span>￥<span class="store-item-price">{{item.priceOnShelf}}</span></div>
-											<div class=""><span class="line-through f12 grey">原价 ￥<span class="market-price">{{item.price}}</span></span>
-											</div>
-										</a>
-										<div class="store-supplier grey f12 dsn">来自
-											<a class="supplier-name mleft10 grey" href="javascript:void(0)">解放区平台</a>
+								<li class="store-item-img radius4 overhidden" prdtId="1">
+									<router-link to="/ItemDetails">
+										<img class="bgloading bgsize110" data-original="../../static/images/prev_img.jpg" src="../../static/images/pixel.gif">
+									</router-link>
+								</li>
+								<li class="boxflex01 f16 m010 mb5 lineheight110">
+									<router-link to="/ItemDetails">
+										<div class="store-item-title">
+											<div class="store-item-name word-break1">{{item.name}}</div>
+											<div class="store-item-desc mtop2 f12 grey word-break1">{{item.nameMini}}</div>
 										</div>
-									</li>
-								</router-link>
+										<div class="red"><span class="f12">精选价 </span>￥<span class="store-item-price">{{item.priceOnShelf}}</span></div>
+										<div class=""><span class="line-through f12 grey">原价 ￥<span class="market-price">{{item.price}}</span></span>
+										</div>
+									</router-link>
+									<div class="store-supplier grey f12 dsn">来自
+										<a class="supplier-name mleft10 grey" href="javascript:void(0)">解放区平台</a>
+									</div>
+								</li>
 								<li class="join-btn store-shoppingcart" @click="addCartEvent(item.id)" leftCount="10"><img src="../../static/images/icon_redcart.png"></li>
 							</ul>
 							<!--<div class="sectionBox loading grey mtop10 newloading"><img src="../../static/images/loading01.gif" /> 加载中…</div>-->
@@ -321,13 +319,11 @@
 			},
 
 			loadMore() {
-				setTimeout(() => {
-					//获取第一个类型商品
-					const itemTypeId = this.curItemTypeId;
-					const itemTypeIndex = this.curItemTypeIndex;
+				//获取第一个类型商品
+				const itemTypeId = this.curItemTypeId;
+				const itemTypeIndex = this.curItemTypeIndex;
 
-					this.getItemList(itemTypeId, itemTypeIndex);
-				}, 1000);
+				this.getItemList(itemTypeId, itemTypeIndex);
 			},
 		}
 	}

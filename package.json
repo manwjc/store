@@ -15,6 +15,9 @@
   "dependencies": {
     "axios": "^0.17.1",
     "fastclick": "^1.0.6",
+    "mockjs": "^1.0.1-beta3",
+    "sass-loader": "^6.0.6",
+    "scss-loader": "^0.0.1",
     "style-loader": "^0.19.1",
     "vue": "^2.5.2",
     "vue-awesome-swiper": "^3.1.2",
@@ -23,6 +26,9 @@
     "vue-loading-tips": "^1.1.2",
     "vue-router": "^3.0.1",
     "vue-show-message": "^1.1.7",
+    "vue-swipe-tab": "^2.0.2",
+    "vue-tabs-component": "^1.4.0",
+    "vue-touch-ripple": "^3.0.0",
     "vuex": "^3.0.1"
   },
   "devDependencies": {
