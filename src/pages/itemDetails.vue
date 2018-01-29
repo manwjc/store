@@ -58,7 +58,7 @@
 		<section class="divide-box"></section>
 		<section id="tabBox" class="tabBox">
 			<!-- swiper -->
-			<div class="height36 swiper-container pos-relative">
+			<div class="swiper-container pos-relative">
 				<div class="hd tab-head borderbottomgrey">
 					<ul>
 						<li class="wp50 slide-tab1 on">
@@ -222,8 +222,7 @@
 							console.log(this.activeIndex);
 						},
 					}
-				},
-				curTab: 0
+				}
 			}
 		},
 		computed: {
@@ -234,19 +233,20 @@
 			swiper() {
 				//SPA worked by the component, find swiper instance by ref attribute.
 				return this.$refs.mySwiper.swiper
+			},
+			curtab() {
+				return this.$refs.mySwiper.swiper.activeIndex
 			}
 		},
 		mounted() {
 			let self = this;
 			this.getProductInfo();
 
-			console.log(VueSwiper, this.swiper);
-			document.querySelector('.slide-tab1').addEventListener('click',
-				function(e) {
-					console.log(e)
-					e.preventDefault();
-					self.swiper.slideTo(0, 0);
-				});
+			document.querySelector('.slide-tab1').addEventListener('click',function(e) {
+				console.log(this.curtab);
+				e.preventDefault();
+				self.swiper.slideTo(0, 0);
+			});
 			document.querySelector('.slide-tab2').addEventListener('click', function(e) {
 				e.preventDefault();
 				self.swiper.slideTo(1, 0);
@@ -286,14 +286,6 @@
 					if(response.data.status === '0000') {
 						this.productList = response.data.list;
 					}
-				}).then(() => {
-					/*var swiper = new Swiper('.swiper-container', {
-						pagination: {
-							el: '.swiper-pagination-tab',
-							type: 'fraction'
-						}
-					});*/
-
 				})
 			},
 		}
@@ -301,9 +293,7 @@
 </script>
 
 <style>
-.swiper-pagination-tab{ position: absolute; width: 100%; height: 100%; top: 0; bottom: 0;}
-.swiper-pagination-tab span{
-	flex: 1;
-	display: block;
-}
+.height52{ height: 52px;}
+.swiper-pagination-tab{ position: absolute; width: 100%; height: 52px; top: 0; opacity: 0;}
+.swiper-pagination-tab span{ flex: 1; display: block;  height: 100%;}
 </style>
