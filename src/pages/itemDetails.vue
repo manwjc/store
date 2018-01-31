@@ -56,59 +56,28 @@
 			</div>
 		</section>
 		<section class="divide-box"></section>
-		<section id="tabBox" class="tabBox">
+		<section id="tabBox" class="tabBox bgwhite">
 			<!-- swiper -->
 			<div class="swiper-container pos-relative">
+				<!--通过swiper的slideTo/slideChange方法将tab关联起来，实现tab点击和滑动切换。可不需要pagination--> 
 				<div class="hd tab-head borderbottomgrey">
 					<ul>
-						<li class="wp50 slide-tab1 on">
-							<a href="javascript:void(0)">介绍</a>
-						</li>
-						<li class="wp50 slide-tab2">
-							<a href="javascript:void(0)">参数</a>
+						<li class="wp50" v-for="(item,index) in tabsList" @click="clickTabs(index)" :class="['slide-tab' + (index+1), {'on':curtabNum===index}]">
+							<a href="javascript:void(0)">{{item}}</a>
 						</li>
 					</ul>
 				</div>
-				<div class="swiper-pagination-tab displaybox"></div>
-				<swiper class="m010 borderbottomgrey" :options="itemInfoOptions" ref="mySwiper">
-					<swiper-slide class="ptb10">介绍内容</swiper-slide>
-					<swiper-slide class="ptb10">参数内容</swiper-slide>
+				<!--<div class="swiper-pagination-tab displaybox"></div>-->
+				<swiper class="m010" :options="itemInfoOptions" ref="mySwiper">
+					<swiper-slide class="ptb10">
+						<div class="img-desc-text-box t-center">该商品暂无图文介绍</div>
+					</swiper-slide>
+					<swiper-slide class="ptb10">
+						<div class="img-desc-text-box t-center">该商品暂无参数</div>
+					</swiper-slide>
 				</swiper>
 			</div>
 
-			<!--<div class="hd tab-head borderbottomgrey">
-				<ul>
-					<li class="wp50 on">
-						<a href="javascript:void(0)">介绍</a>
-					</li>
-					<li class="wp50">
-						<a href="javascript:void(0)">参数</a>
-					</li>
-				</ul>
-			</div>-->
-			<div class="bd" id="tabBox-bd">
-				<div class="con bgwhite">
-					<div id="tabOne" class="p010">
-						<div class="info pt10 lineheight0">
-							<img class="item-pic-big" src="?x-oss-process=image/resize,w_560/format,jpg/quality,q_95/interlace,1" />
-							<div class="img-desc-text-box t-center">该商品暂无图文介绍</div>
-						</div>
-					</div>
-				</div>
-				<div class="con bgwhite" style="display:none">
-					<div id="tabTwo" class="p010">
-						<div class="info pt10">
-							<table class="bordered grey">
-								<tr>
-									<td>${pp.tPropName }</td>
-									<td>${pp.tPropValue }</td>
-								</tr>
-							</table>
-							<div class="img-desc-text-box t-center">该商品暂无参数</div>
-						</div>
-					</div>
-				</div>
-			</div>
 		</section>
 		<div id="gotop" class="go-top" style="display:none;"><img src="../../static/images/icon-gotop.png" /><br/>顶部</div>
 
@@ -154,17 +123,11 @@
 	import Mock from 'mockjs'
 	import 'swiper/dist/css/swiper.css'
 	import VueSwiper from 'vue-awesome-swiper'
-	//	import Tabs from 'vue-swipe-tab'
-
-	import { touchRipple } from 'vue-touch-ripple'
-	// import styles
-	import 'vue-touch-ripple/dist/vue-touch-ripple.css'
 
 	Vue.use(VueMessage, {
 		duration: 2000
 	})
 	Vue.use(VueSwiper)
-	//	Vue.use(Tabs)
 
 	export default {
 		name: 'itemDetails',
@@ -190,6 +153,7 @@
 				productList: {},
 				productNum: 1,
 
+				//swiper options
 				adList: [{
 						url: '/supplierInfo/supplier03.htm',
 						pic: '../../static/images/supplier_a_01.jpg'
@@ -205,7 +169,8 @@
 				],
 				bannerOptions: {
 					pagination: {
-						el: '.swiper-pagination'
+						el: '.swiper-pagination',
+						clickable: true
 					},
 					autoPlay: true
 				},
@@ -217,12 +182,15 @@
 							return '<span class="boxflex01"></span>';
 						},*/
 					},
-					on: {
+					/*on: {
 						slideChange: function() {
-							console.log(this.activeIndex);
+							//此处无法动态修改Vue.data里的curtabNum值，须在mounted里面调用slideChange方法
+							//Vue.set(Vue, 'curtabNum', this.activeIndex);
 						},
-					}
-				}
+					}*/
+				},
+				tabsList: ['介绍', '参数'],
+				curtabNum: 0,	
 			}
 		},
 		computed: {
@@ -230,32 +198,28 @@
 				cartCount: 'cartCount',
 				haveBeenSet: 'haveBeenSet'
 			}),
+			//获取swiper，以便使用self.swiper.on('slideChange', function(){})，this.swiper.slideTo(index, 0)方法
 			swiper() {
 				//SPA worked by the component, find swiper instance by ref attribute.
 				return this.$refs.mySwiper.swiper
 			},
+			//直接在dom上调用curtab，此时swiper尚未初始化完成，会报错；须在mounted/methods阶段点击、切换时更新curtabNum， 在dom上面使用curtabNum来监听
 			curtab() {
 				return this.$refs.mySwiper.swiper.activeIndex
 			}
 		},
 		mounted() {
-			let self = this;
 			this.getProductInfo();
+		
+			//滑动切换更新curtabNum
+			this.slideTabs();
 
-			document.querySelector('.slide-tab1').addEventListener('click',function(e) {
-				console.log(this.curtab);
-				e.preventDefault();
-				self.swiper.slideTo(0, 0);
-			});
-			document.querySelector('.slide-tab2').addEventListener('click', function(e) {
-				e.preventDefault();
-				self.swiper.slideTo(1, 0);
-			});
 		},
 		components: {
-			touchRipple
+			
 		},
-		methods: { //增加购物车数量
+		methods: { 
+			//增加购物车数量
 			addCartEvent(productId) {
 				this.$store.commit('addCart', this.productNum);
 				this.$showMsg('已加入购物车');
@@ -288,12 +252,24 @@
 					}
 				})
 			},
+			
+			//直接在dom上调用curtab，此时swiper尚未初始化完成，会报错；须在mounted/methods阶段点击、切换时更新curtabNum， 在dom上面使用curtabNum来监听
+			//点击更新curtabNum
+			clickTabs(index) {
+				this.swiper.slideTo(index, 0);
+				this.curtabNum = this.curtab;
+			},
+			//滑动切换更新curtabNum
+			slideTabs() {
+				let self = this;
+				self.swiper.on('slideChange', function(){
+					Vue.set(self, 'curtabNum', this.activeIndex);	//里面的this为swiper
+				})
+			}
 		}
 	}
 </script>
 
 <style>
-.height52{ height: 52px;}
-.swiper-pagination-tab{ position: absolute; width: 100%; height: 52px; top: 0; opacity: 0;}
-.swiper-pagination-tab span{ flex: 1; display: block;  height: 100%;}
+	
 </style>
