@@ -124,6 +124,10 @@
 	import 'swiper/dist/css/swiper.css'
 	import VueSwiper from 'vue-awesome-swiper'
 
+	import { touchRipple } from 'vue-touch-ripple'
+	// import styles
+	import 'vue-touch-ripple/dist/vue-touch-ripple.css'
+
 	Vue.use(VueMessage, {
 		duration: 2000
 	})
@@ -216,7 +220,7 @@
 
 		},
 		components: {
-			
+			touchRipple
 		},
 		methods: { 
 			//增加购物车数量
