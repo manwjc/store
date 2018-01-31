@@ -62,7 +62,7 @@
 				<!--通过swiper的slideTo/slideChange方法将tab关联起来，实现tab点击和滑动切换。可不需要pagination--> 
 				<div class="hd tab-head borderbottomgrey">
 					<ul>
-						<li class="wp50" v-for="(item,index) in tabsList" @click="clickTabs(index)" :class="['slide-tab' + (index+1), {'on':curtabNum===index}]">
+						<li class="wp50" v-for="(item,index) in tabsList" @click="clickTabs(index)" :class="['slide-tab' + (index+1), 'slide' + (index+1), {'on':curtabNum===index}]">
 							<a href="javascript:void(0)">{{item}}</a>
 						</li>
 					</ul>
@@ -70,7 +70,9 @@
 				<!--<div class="swiper-pagination-tab displaybox"></div>-->
 				<swiper class="m010" :options="itemInfoOptions" ref="mySwiper">
 					<swiper-slide class="ptb10">
-						<div class="img-desc-text-box t-center">该商品暂无图文介绍</div>
+						<div class="img-desc-text-box t-center">
+							<img v-for="item in productList.pruductImageList" v-lazy="item"/>
+						</div>
 					</swiper-slide>
 					<swiper-slide class="ptb10">
 						<div class="img-desc-text-box t-center">该商品暂无参数</div>
@@ -127,6 +129,12 @@
 	import { touchRipple } from 'vue-touch-ripple'
 	// import styles
 	import 'vue-touch-ripple/dist/vue-touch-ripple.css'
+	
+	import vueLazyLoad from 'vue-lazyload'
+	
+	Vue.use(vueLazyLoad, {
+		loading: './../assets/loading01.gif',
+	})
 
 	Vue.use(VueMessage, {
 		duration: 2000
@@ -149,7 +157,8 @@
 						'userId|+1': 73568,
 						'id|+1': 1253001,
 						'convertMoney|+1': 7.00,
-						'cinemaItem': Mock.Random.boolean(1, 4, true)
+						'cinemaItem': Mock.Random.boolean(1, 4, true),
+						'pruductImageList|2-8': [Mock.Random.dataImage('200x100', 'image Mockjs')]
 					}],
 					'status': '0000',
 					'hasNext|1': Mock.Random.boolean(),
@@ -181,11 +190,12 @@
 				itemInfoOptions: {
 					pagination: {
 						el: '.swiper-pagination-tab',
-						clickable: true,
+						clickable: true
 						/*renderBullet: function(index, className) {
 							return '<span class="boxflex01"></span>';
 						},*/
 					},
+//					autoHeight: true
 					/*on: {
 						slideChange: function() {
 							//此处无法动态修改Vue.data里的curtabNum值，须在mounted里面调用slideChange方法
@@ -275,5 +285,7 @@
 </script>
 
 <style>
-	
+	.tabBox .hd ul li.on a{
+		transition:  all 0.2s ease-in;
+	}
 </style>
