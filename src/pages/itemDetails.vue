@@ -169,15 +169,15 @@
 				//swiper options
 				adList: [{
 						url: '/supplierInfo/supplier03.htm',
-						pic: '../../static/images/supplier_a_01.jpg'
+						pic: '@/../static/images/supplier_a_01.jpg'
 					},
 					{
 						url: '/supplierInfo/supplier03.htm',
-						pic: '../../static/images/supplier_b_01.jpg'
+						pic: '@/../static/images/supplier_b_01.jpg'
 					},
 					{
 						url: '/supplierInfo/supplier03.htm',
-						pic: '../../static/images/supplier_c_01.jpg'
+						pic: '@/../static/images/supplier_c_01.jpg'
 					}
 				],
 				bannerOptions: {
@@ -288,4 +288,5 @@
 	.tabBox .hd ul li.on a{
 		transition:  all 0.2s ease-in;
 	}
+	.tab-head{ position: sticky; top: 0;}
 </style>

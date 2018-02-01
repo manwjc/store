@@ -11,17 +11,22 @@ module.exports = {
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
     proxyTable: {	// 需要 proxyTable 代理的接口（可跨域）//修改脚手架的东西后一定要npm run dev，否则不生效！！	
-      '/hostname': {
+      '/common': {	//不需转跳，此处定义为接口(../common/toUrl.do)开头的名称，遇到该名称，则用target里的域名进行拼接访问
         target: 'https://www.linlile.com.cn/LA',	//设置你调用的接口域名和端口号 别忘了加http
         changeOrigin: true,
-        pathRewrite: {
+        /*pathRewrite: {
           '^/hostname': ''
           //这里理解成用‘/hostname’代替target里面的地址，后面组件中我们掉接口时直接用api代替 比如我要调用'http://40.00.100.100:3002/user/add'，直接写‘/hostname/user/add’即可
-        }
+        }*/
+      },
+      '/API': {	//不需转跳，此处定义为接口(/API/ebuyV2/qryStoreInfo.json)开头的名称
+      	target: 'http://api.linlile.com.cn',
+      	changeOrigin: true
       }
     },
 
     // Various Dev Server settings
+    //env: require('./dev.env'),
     host: 'localhost', // can be overwritten by process.env.HOST
     port: 8080, // can be overwritten by process.env.PORT, if port is in use, a free one will be determined
     autoOpenBrowser: false,

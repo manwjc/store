@@ -87,7 +87,7 @@
 				<!-- swiper -->
 				<div class="height36">
 					<swiper class="m010 borderbottomgrey" :options="itemTypeOptions">
-						<swiper-slide v-for="(item, index) in itemTypes" :key="index" class="ptb10" :class="index === curItemTypeIndex ? 'red':''" @click.native.stop="getItemList(item.id, index, changeItemType)">{{item.typeName}}</swiper-slide>
+						<swiper-slide v-for="(item, index) in itemTypes" :key="index" class="ptb10 t-center" :class="index === curItemTypeIndex ? 'red':''" @click.native.stop="getItemList(item.id, index, changeItemType)">{{item.typeName}}</swiper-slide>
 					</swiper>
 				</div>
 
@@ -152,8 +152,7 @@
 		name: 'Store',
 		data() {
 			return {
-				commonUrl: '../hostname/common/toUrl.do', //开发环境，接口代理到本地，前面加上/hostname
-				//commonUrl: '../common/toUrl.do', //build 正式环境
+				commonUrl: '../common/toUrl.do',
 				itemTypes: [],
 				itemList: [],
 				page: 1,
@@ -161,15 +160,15 @@
 				hasNext: true,
 				adList: [{
 						url: '/supplierInfo/supplier03.htm',
-						pic: '../../static/images/supplier_a_01.jpg'
+						pic: '@/../static/images/supplier_a_01.jpg'	//此处路径为@/../static/images/，build后才可以显示；使用../../static/images/，build后不显示
 					},
 					{
 						url: '/supplierInfo/supplier03.htm',
-						pic: '../../static/images/supplier_b_01.jpg'
+						pic: '@/../static/images/supplier_b_01.jpg'
 					},
 					{
 						url: '/supplierInfo/supplier03.htm',
-						pic: '../../static/images/supplier_c_01.jpg'
+						pic: '@/../static/images/supplier_c_01.jpg'
 					}
 				],
 				curItemTypeIndex: 0,
@@ -215,6 +214,11 @@
 				this.loadMore();
 			}).catch((err) => {
 				console.log(err);
+			})
+			
+			//遇到/API则直接通过http://api.linlile.com.cn进行访问
+			this.$axios.get('/API/ebuyV2/qryStoreInfo.json', {
+				params: {supplyMerchantId:10012278}
 			})
 		},
 		computed: {
