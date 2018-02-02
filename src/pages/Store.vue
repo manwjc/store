@@ -152,7 +152,7 @@
 		name: 'Store',
 		data() {
 			return {
-				commonUrl: '../common/toUrl.do',
+				commonUrl: '/common/toUrl.do',
 				itemTypes: [],
 				itemList: [],
 				page: 1,
