@@ -22,6 +22,12 @@ module.exports = {
       '/API': {	//不需转跳，此处定义为接口(/API/ebuyV2/qryStoreInfo.json)开头的名称
       	target: 'https://api.linlile.com.cn',
       	changeOrigin: true
+      },
+      
+      //本地nodejs接口
+      '/storeInfo': {
+      	target: 'http://localhost:3000',
+      	changeOrigin: true
       }
     },
 

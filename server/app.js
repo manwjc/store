@@ -8,13 +8,22 @@ var ejs = require('ejs')
 
 var index = require('./routes/index');
 var users = require('./routes/users');
+var login = require('./routes/login');
+var storeInfo = require('./routes/storeInfo');
+var storeAds = require('./routes/storeAds');
 
 var app = express();
 
+var mongoose = require('mongoose');
+
+mongoose.connect('mongodb://127.0.0.1:27017/blog');
+
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
+//set html engine
 app.engine('.html', ejs.__express)
 app.set('view engine', 'html');
+
 //app.set('view engine', 'jade');
 
 // uncomment after placing your favicon in /public
@@ -27,6 +36,9 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', index);
 app.use('/users', users);
+app.use('/login', login);
+app.use('/storeInfo', storeInfo);
+app.use('/storeAds', storeAds);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -47,3 +59,5 @@ app.use(function(err, req, res, next) {
 });
 
 module.exports = app;
+
+

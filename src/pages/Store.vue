@@ -231,19 +231,20 @@
 			getItemTypes(resolve) {
 				let dataParams = {
 					'detailUrl': '/ebuyV2/qryStoreInfo.json',
-					'supplyMerchantId': this.$route.query.storeId
+					'supplyMerchantId': this.$route.query.storeId,
+					'storeId': this.$route.query.storeId
 				}
 
-				this.$axios.get(this.commonUrl, {
+				this.$axios.get('/storeInfo', {
 					params: dataParams
 				}).then((res) => {
 					if(res.data.status === '0000') {
-						this.itemTypes = res.data.dataValue.ebuyProdTypeList;
+						this.itemTypes = res.data.result.ebuyProdTypeList;
 
 						this.curItemTypeId = this.itemTypes[0].id;
 						console.log('请求商品类型完成');
 						//通知promise执行状态
-						resolve(res.data.dataValue);
+						resolve(res.data.result);
 					}
 				})
 			},

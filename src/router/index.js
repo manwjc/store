@@ -6,6 +6,7 @@ Vue.use(Router)
 
 const Store = resolve => require(['@/pages/Store'], resolve)
 const ItemDetails = resolve => require(['@/pages/ItemDetails'], resolve)
+const Login = resolve => require(['@/pages/Login'], resolve)
 
 export default new Router({
   routes: [
@@ -18,6 +19,11 @@ export default new Router({
       path: '/itemDetails',
       name: 'ItemDetails',
       component: ItemDetails
+    },
+    {
+      path: '/Login',
+      name: 'Login',
+      component: Login
     }
   ]
 })
