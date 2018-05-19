@@ -5,6 +5,8 @@ import App from './App'
 import router from './router'
 
 import axios from 'axios'
+const baseURL = '/baseApi'
+axios.defaults.baseURL = baseURL
 Vue.prototype.$axios = axios
 
 import FastClick from 'fastclick'

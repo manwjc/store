@@ -63,7 +63,7 @@
 			<section class="sectionBox">
 				<swiper class="m010 mtop10 slideBox store-banner box-shadow" :options="bannerOptions">
 					<swiper-slide v-for="(item, index) in adList" :key="index">
-						<img :src="item.pic">
+						<img v-lazy="item.pic">
 					</swiper-slide>
 					<div class="swiper-pagination" slot="pagination"></div>
 				</swiper>
@@ -137,6 +137,12 @@
 	import VueMessage from 'vue-show-message'
 	import loading from 'vue-loading-tips'
 	import infiniteScroll from 'vue-infinite-scroll'
+	
+	import vueLazyLoad from 'vue-lazyload'
+	
+	Vue.use(vueLazyLoad, {
+		loading: 'static/images/prev_img.jpg',
+	})
 
 	Vue.use(VueSwiper)
 
@@ -156,7 +162,7 @@
 				itemTypes: [],
 				itemList: [],
 				page: 1,
-				pageNum: 5,
+				pageNum: 10,
 				hasNext: true,
 				adList: [{
 						url: '/supplierInfo/supplier03.htm',
@@ -217,9 +223,11 @@
 			})
 			
 			//遇到/API则直接通过http://api.linlile.com.cn进行访问
-			this.$axios.get('/API/ebuyV2/qryStoreInfo.json', {
+			/*this.$axios.get('/API/ebuyV2/qryStoreInfo.json', {
 				params: {supplyMerchantId:10012278}
-			})
+			})*/
+			
+			this.getStoreAds();
 		},
 		computed: {
 			cartCount() {
@@ -245,6 +253,16 @@
 						console.log('请求商品类型完成');
 						//通知promise执行状态
 						resolve(res.data.result);
+					}
+				})
+			},
+			//获取店铺广告
+			getStoreAds() {
+				this.$axios.get('/storeAds', {
+					params: {'storeId': this.$route.query.storeId}
+				}).then((res) => {
+					if(res.data.status === '0000') {
+						this.adList = res.data.result;
 					}
 				})
 			},
@@ -292,20 +310,20 @@
 				}
 
 				this.curItemTypeId = productTypeId;
-				this.$axios.get(this.commonUrl, {
+				this.$axios.get(/*this.commonUrl*/'/productList', {
 					params: dataParams
 				}).then((res) => {
 					if(res.data.status === '0000') {
 						//如果curItemTypeIndex不是当前类型，则将itemList全部替换为新返回的商品列表
 						if(this.curItemTypeIndex !== index) {
-							this.itemList = res.data.dataValue.productList;
+							this.itemList = res.data.result.productList;
 						//如果curItemTypeIndex是当前类型，则将新返回的商品列表累加到itemList里
 						} else {
-							this.itemList = this.itemList.concat(res.data.dataValue.productList)
+							this.itemList = this.itemList.concat(res.data.result.productList)
 						}
 
 						this.page++;
-						this.hasNext = res.data.dataValue.hasNext;
+						this.hasNext = res.data.result.hasNext;
 						this.busy = false;
 						console.log('请求商品列表完成');
 					}
@@ -338,4 +356,5 @@
 	.height36 {
 		height: 36px;
 	}
+	.store-banner img{ max-height: 100%;}
 </style>

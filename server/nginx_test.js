@@ -6,7 +6,7 @@ var server1 = http.createServer(function(req, res) {
 	res.writeHead(200, {
 		'Content-Type': 'text/plain'
 	});
-	res.end('Hello Node.js3000 bb\n');
+	res.end('Hello Node.js3000 aaa\n');
 }).listen(3000, "127.0.0.1");
 
 var server2 = http.createServer(function(req, res) {
@@ -14,7 +14,7 @@ var server2 = http.createServer(function(req, res) {
 	res.writeHead(200, {
 		'Content-Type': 'text/plain'
 	});
-	res.end('Hello Node.js3001 aa\n');
+	res.end('Hello Node.js3001 bbb\n');
 }).listen(3001, "127.0.0.1");
 
 server1.once('listening', function() {
