@@ -13,17 +13,26 @@ export default new Router({
     {
       path: '/',
       name: 'Store',
-      component: Store
+      component: Store,
+      meta: {
+        keepAlive: false
+      }
     },
     {
       path: '/itemDetails',
       name: 'ItemDetails',
-      component: ItemDetails
+      component: ItemDetails,
+      meta: {
+        keepAlive: false
+      }
     },
     {
       path: '/Login',
       name: 'Login',
-      component: Login
+      component: Login,
+      meta: {
+        keepAlive: false
+      }
     }
   ]
 })

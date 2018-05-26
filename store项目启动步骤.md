@@ -17,3 +17,16 @@
 
 
 ## 启动mongoVUE可进行数据查看修改
+
+-------------------------------------------------------------------------------------------
+
+## kengs
+
+### 一步启动项目-执行多任务：
+安装concurrently： npm install -g concurrently
+package.json中定义命令："go": "concurrently \"npm run startServer\" \"npm run start\" \"npm run startNginx\""
+npm run go
+即可访问http://localhost:8080/#/?storeId=10012278&jfqsource=app 进入店铺首页，需带店铺id，否则后端接口会报错，导致后端项目自动停止，需重新启动
+
+### itemDetails.vue中启用Mock数据的话，进入详情页后点后退返回到首页时，首页发的请求返回数据会被替换为mock数据，导致报错
+可以将mock接收的接口后缀修改区分一下即可：Mock.mock(/(\.jsontest)|(\.dotest)/, {}

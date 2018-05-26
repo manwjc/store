@@ -145,7 +145,7 @@
 		name: 'itemDetails',
 		data() {
 			return {
-				mockData: Mock.mock(/(\.json)|(\.do)/, {
+				mockData: Mock.mock(/(\.jsontest)|(\.dotest)/, {
 					// 属性 list 的值是一个数组，其中含有 1 到 10 个元素
 					'list|1': [{
 						// 属性 id 是一个自增数，起始值为 1，每次增 1
@@ -251,10 +251,10 @@
 			//get传参方式
 			getProductInfo() {
 				const self = this;
-				const url = '../hostname/common/toUrl.do'; //开发环境，接口代理到本地，前面加上/api
+				const url = '../hostname/common/toUrl.dotest'; //开发环境，接口代理到本地，前面加上/api
 				//const url = '../common/toUrl.do';		//build 正式环境
 				let dataParams = {
-					'detailUrl': '/livingPay/qryLivingPayItemList.json'
+					'detailUrl': '/livingPay/qryLivingPayItemList.jsontest'
 				}
 
 				self.$axios.get(url, {

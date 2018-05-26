@@ -106,8 +106,8 @@
 											<div class="store-item-name word-break1">{{item.name}}</div>
 											<div class="store-item-desc mtop2 f12 grey word-break1">{{item.nameMini}}</div>
 										</div>
-										<div class="red"><span class="f12">精选价 </span>￥<span class="store-item-price">{{item.priceOnShelf}}</span></div>
-										<div class=""><span class="line-through f12 grey">原价 ￥<span class="market-price">{{item.price}}</span></span>
+										<div class="red"><span class="f12">精选价 </span><span class="store-item-price">{{item.priceOnShelf | numFixed | currency}}</span></div>
+										<div class=""><span class="line-through f12 grey">原价 <span class="market-price">{{item.price | numFixed | currency}}</span></span>
 										</div>
 									</router-link>
 									<div class="store-supplier grey f12 dsn">来自
